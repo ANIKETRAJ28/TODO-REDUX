@@ -1,16 +1,18 @@
 import { useState } from 'react';
 import { removeTodo, editTodo } from '../../actions/index';
 import { useDispatch } from 'react-redux';
+import { bindActionCreators } from 'redux';
 
 function Todo({title, id}) {
     const dispatch = useDispatch();
     const [isEditing, setIsEditing] = useState(false);
     const [editedText, setEditedText] = useState(title);
+    const actions = bindActionCreators({removeTodo, editTodo}, dispatch);
 
     function updateTodo() {
         if(isEditing) {
             setIsEditing(false);
-            dispatch(editTodo({id, title: editedText}));
+            actions.editTodo({id, title: editedText});
         } else {
             setIsEditing(true);
         }
@@ -18,14 +20,14 @@ function Todo({title, id}) {
 
     return (
         <div>
-            {(isEditing) ? 
+            {(isEditing) ?
                 <input
                     value={editedText}
                     onChange={(e) => setEditedText(e.target.value)}
                 /> : 
                 editedText
             }
-            <button onClick={() => dispatch(removeTodo({id}))}>Delete</button>
+            <button onClick={() => actions.removeTodo({id})}>Delete</button>
             <button onClick={updateTodo}>{(isEditing) ? 'Save' : 'Edit'}</button>
         </div>
     )
